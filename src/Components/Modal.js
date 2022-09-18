@@ -1,9 +1,8 @@
 import React from "react";
-import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
 function ReactModal(props) {
-  const { title, onSave, show,  onClose, children } = props;
+  const { title, show, onClose, children } = props;
   return (
     <>
       <Modal show={show} onHide={onClose}>
