@@ -1,0 +1,11 @@
+export const GET_USER = "GET_USER";
+export const GET_USER_SUCCESS = "GET_USER_SUCCESS";
+
+export const GET_POST = "GET_POST";
+export const GET_POST_SUCCESS = "GET_POST_SUCCESS";
+
+export const CREATE_POST = "CREATE_POST";
+export const CREATE_POST_SUCCESS = "CREATE_POST_SUCCESS";
+
+export const CREATE_USER = "CREATE_USER";
+export const CREATE_USER_SUCCESS = "CREATE_USER_SUCCESS";
