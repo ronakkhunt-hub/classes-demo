@@ -7,10 +7,7 @@ function NavBar() {
     <Navbar variant="light" bg="light" expand="lg">
       <Container fluid>
         <Navbar.Brand>
-          <Link
-            style={{ textDecoration: "none", color: "#333333" }}
-            to="/"
-          >
+          <Link style={{ textDecoration: "none", color: "#333333" }} to="/">
             React-Bootstrap
           </Link>
         </Navbar.Brand>
@@ -34,6 +31,16 @@ function NavBar() {
                   to="/posts"
                 >
                   Posts
+                </Link>
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link>
+                <Link
+                  style={{ textDecoration: "none", color: "#666666" }}
+                  to="/login"
+                >
+                  Login
                 </Link>
               </Nav.Link>
             </Nav.Item>

@@ -7,7 +7,9 @@ function ReactModal(props) {
     <>
       <Modal show={show} onHide={onClose}>
         <Modal.Header closeButton>
-          <Modal.Title>{title}</Modal.Title>
+          <Modal.Title style={{ textTransform: "capitalize" }}>
+            {title}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>{children}</Modal.Body>
       </Modal>

@@ -9,3 +9,13 @@ export const postOptions = async (url, data) => {
     headers: { "Content-type": "application/json; charset=UTF-8" },
   });
 };
+
+export const putOptions = async (url, id, data) => {
+  return await axios.put(`${url}/${id}`, JSON.stringify(data), {
+    headers: { "Content-type": "application/json; charset=UTF-8" },
+  });
+};
+
+export const deleteOptions = async (url, id) => {
+  return await axios.delete(`${url}/${id}`);
+};

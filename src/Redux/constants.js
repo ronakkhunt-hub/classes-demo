@@ -1,11 +1,11 @@
-export const GET_USER = "GET_USER";
-export const GET_USER_SUCCESS = "GET_USER_SUCCESS";
-
 export const GET_POST = "GET_POST";
 export const GET_POST_SUCCESS = "GET_POST_SUCCESS";
 
 export const CREATE_POST = "CREATE_POST";
 export const CREATE_POST_SUCCESS = "CREATE_POST_SUCCESS";
 
-export const CREATE_USER = "CREATE_USER";
-export const CREATE_USER_SUCCESS = "CREATE_USER_SUCCESS";
+export const UPDATE_POST = "UPDATE_POST";
+export const UPDATE_POST_SUCCESS = "UPDATE_POST_SUCCESS";
+
+export const DELETE_POST = "DELETE_POST";
+export const DELETE_POST_SUCCESS = "DELETE_POST_SUCCESS";

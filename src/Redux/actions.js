@@ -1,23 +1,13 @@
 import {
   CREATE_POST,
   CREATE_POST_SUCCESS,
-  CREATE_USER,
-  CREATE_USER_SUCCESS,
+  DELETE_POST,
+  DELETE_POST_SUCCESS,
   GET_POST,
   GET_POST_SUCCESS,
-  GET_USER,
-  GET_USER_SUCCESS,
+  UPDATE_POST,
+  UPDATE_POST_SUCCESS,
 } from "./constants";
-
-export const getUserAction = (payload) => ({
-  type: GET_USER,
-  payload,
-});
-
-export const getUserSuccessAction = (payload) => ({
-  type: GET_USER_SUCCESS,
-  payload,
-});
 
 export const getPostAction = (payload) => ({
   type: GET_POST,
@@ -39,12 +29,22 @@ export const createPostSuccessAction = (payload) => ({
   payload,
 });
 
-export const createUserAction = (payload) => ({
-  type: CREATE_USER,
+export const updatePostAction = (payload) => ({
+  type: UPDATE_POST,
   payload,
 });
 
-export const createUserSuccessAction = (payload) => ({
-  type: CREATE_USER_SUCCESS,
+export const updatePostSuccessAction = (payload) => ({
+  type: UPDATE_POST_SUCCESS,
+  payload,
+});
+
+export const deletePostAction = (payload) => ({
+  type: DELETE_POST,
+  payload,
+});
+
+export const deletePostSuccessAction = (payload) => ({
+  type: DELETE_POST_SUCCESS,
   payload,
 });

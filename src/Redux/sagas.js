@@ -1,17 +1,17 @@
 import { call, takeEvery, put } from "redux-saga/effects";
-import { createPostSuccessAction, createUserSuccessAction, getPostSuccessAction, getUserSuccessAction } from "./actions";
-import { getOptions, postOptions } from "./apiClient";
-import { CREATE_POST, CREATE_USER, GET_POST, GET_USER } from "./constants";
-
-export function* getUser(action) {
-  const { url } = action.payload;
-  try {
-    const result = yield call(getOptions, url);
-    yield put(getUserSuccessAction(result.data));
-  } catch (error) {
-    console.log("error", error);
-  }
-}
+import {
+  createPostSuccessAction,
+  deletePostSuccessAction,
+  getPostSuccessAction,
+  updatePostSuccessAction,
+} from "./actions";
+import {
+  deleteOptions,
+  getOptions,
+  postOptions,
+  putOptions,
+} from "./apiClient";
+import { CREATE_POST, DELETE_POST, GET_POST, UPDATE_POST } from "./constants";
 
 export function* getPost(action) {
   const { url } = action.payload;
@@ -33,19 +33,29 @@ export function* createPost(action) {
   }
 }
 
-export function* createUser(action) {
-  const { url, data } = action.payload;
+export function* updatePost(action) {
+  const { url, id, data } = action.payload;
   try {
-    const result = yield call(postOptions, url, data);
-    yield put(createUserSuccessAction(result.data));
+    yield call(putOptions, url, id, data);
+    yield put(updatePostSuccessAction({ id, data }));
+  } catch (error) {
+    console.log("error", error);
+  }
+}
+
+export function* deletePost(action) {
+  const { url, id } = action.payload;
+  try {
+    yield call(deleteOptions, url, id);
+    yield put(deletePostSuccessAction({ id }));
   } catch (error) {
     console.log("error", error);
   }
 }
 
 export function* rootSaga() {
-  yield takeEvery(GET_USER, getUser);
   yield takeEvery(GET_POST, getPost);
   yield takeEvery(CREATE_POST, createPost);
-  yield takeEvery(CREATE_USER, createUser);
+  yield takeEvery(UPDATE_POST, updatePost);
+  yield takeEvery(DELETE_POST, deletePost);
 }

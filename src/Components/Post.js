@@ -2,14 +2,22 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { createPostAction, getPostAction } from "../Redux/actions";
+import {
+  createPostAction,
+  deletePostAction,
+  getPostAction,
+  updatePostAction,
+} from "../Redux/actions";
 import ReactModal from "./Modal";
 import NavBar from "./Navbar";
 
 function Post() {
-  const [show, setShow] = useState(false);
+  const [id, setId] = useState("");
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [postAction, setPostAction] = useState("create");
+
+  const [show, setShow] = useState(false);
 
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
@@ -22,15 +30,42 @@ function Post() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (postAction === "create") {
+      dispatch(
+        createPostAction({
+          url: "https://jsonplaceholder.typicode.com/posts",
+          data: { title, body },
+        })
+      );
+      setTitle("");
+      setBody("");
+    } else {
+      dispatch(
+        updatePostAction({
+          url: "https://jsonplaceholder.typicode.com/posts",
+          id,
+          data: { id, title, body },
+        })
+      );
+    }
+    setShow(false);
+  };
+
+  const updatePost = (post) => {
+    setPostAction("update");
+    setId(post.id);
+    setTitle(post.title);
+    setBody(post.body);
+    setShow(true);
+  };
+
+  const deletePost = (id) => {
     dispatch(
-      createPostAction({
+      deletePostAction({
         url: "https://jsonplaceholder.typicode.com/posts",
-        data: { title, body },
+        id
       })
     );
-    setTitle("");
-    setBody("");
-    setShow(false);
   };
 
   return (
@@ -41,20 +76,40 @@ function Post() {
       </div>
       <table className="table">
         <thead>
-          <tr>
+          <tr className="text-center">
             <th>No</th>
             <th>Title</th>
             <th>Message</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {posts?.map((post, key) => (
-            <tr key={key}>
-              <td>{key + 1}</td>
-              <td>{post.title}</td>
-              <td>{post.body}</td>
-            </tr>
-          ))}
+          {posts?.map(
+            (post, key) =>
+              key + 1 <= 10 && (
+                <tr key={key}>
+                  <td>{key + 1}</td>
+                  <td>{post.title}</td>
+                  <td>{post.body}</td>
+                  <td className="d-flex">
+                    <Button
+                      onClick={() => updatePost(post)}
+                      variant="warning"
+                      className="m-2"
+                    >
+                      Update
+                    </Button>
+                    <Button
+                      onClick={() => deletePost(post.id)}
+                      variant="danger"
+                      className="m-2"
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              )
+          )}
         </tbody>
       </table>
       <ReactModal
@@ -67,19 +122,25 @@ function Post() {
             <Form.Control
               placeholder="Enter Title"
               autoFocus
+              value={title}
               onChange={(e) => setTitle(e.target.value)}
-            ></Form.Control>
+              ></Form.Control>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Control
               as="textarea"
+              value={body}
               placeholder="Enter Body"
               onChange={(e) => setBody(e.target.value)}
             ></Form.Control>
           </Form.Group>
           <Form.Group className="mb-3">
-            <Button className="m-2" type="submit">Submit</Button>
-            <Button className="m-2" variant="danger" type="reset">Cancel</Button>
+            <Button className="m-2" type="submit">
+              Submit
+            </Button>
+            <Button onClick={() => setShow(false)} className="m-2" variant="danger" type="reset">
+              Cancel
+            </Button>
           </Form.Group>
         </Form>
       </ReactModal>
