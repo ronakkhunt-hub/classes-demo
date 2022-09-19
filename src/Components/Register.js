@@ -6,6 +6,7 @@ import { auth } from "../firebase-config";
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     await createUserWithEmailAndPassword(auth, email, password);

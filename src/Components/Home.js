@@ -6,7 +6,9 @@ function Home(props) {
   return (
     <div>
       <NavBar />
-      <h1>Home</h1>
+      <div className="homeContainer">
+        <h1>Home</h1>
+      </div>
     </div>
   );
 }
