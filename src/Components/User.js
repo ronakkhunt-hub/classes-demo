@@ -36,7 +36,7 @@ function User() {
       setUsers(usersData);
     };
     getUser();
-  }, []);
+  }, [userCollection]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

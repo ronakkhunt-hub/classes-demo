@@ -26,7 +26,7 @@ function Post() {
     dispatch(
       getPostAction({ url: "https://jsonplaceholder.typicode.com/posts" })
     );
-  }, []);
+  }, [dispatch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

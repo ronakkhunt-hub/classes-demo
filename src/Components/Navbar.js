@@ -1,8 +1,17 @@
+import { onAuthStateChanged } from "firebase/auth";
+import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Link } from "react-router-dom";
+import { auth } from "../firebase-config";
 function NavBar() {
+  const [userProfile, setUserProfile] = useState({});
+
+  onAuthStateChanged(auth, (currentUser) => {
+    setUserProfile(currentUser);
+  });
+
   return (
     <Navbar variant="light" bg="light" expand="lg">
       <Container fluid>
@@ -40,7 +49,7 @@ function NavBar() {
                   style={{ textDecoration: "none", color: "#666666" }}
                   to="/login"
                 >
-                  Login
+                  {userProfile ? userProfile.email : "Login"}
                 </Link>
               </Nav.Link>
             </Nav.Item>
