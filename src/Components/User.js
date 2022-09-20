@@ -130,14 +130,16 @@ function User() {
                 placeholder="Enter Title"
                 autoFocus
                 value={name}
+                required
                 onChange={(e) => setName(e.target.value)}
-              ></Form.Control>
+                ></Form.Control>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Control
                 as="input"
                 type="email"
                 value={email}
+                required
                 placeholder="Enter Email"
                 onChange={(e) => setEmail(e.target.value)}
               ></Form.Control>

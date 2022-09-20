@@ -1,8 +1,7 @@
 import React from "react";
 import NavBar from "./Navbar";
 
-function Home(props) {
-  console.log(`props`, props)
+function Home() {
   return (
     <div>
       <NavBar />

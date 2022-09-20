@@ -5,7 +5,6 @@ import { Button, Container, Form } from "react-bootstrap";
 import { auth } from "../firebase-config";
 
 function Login() {
-  const [userProfile, setUserProfile] = useState({});
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,9 +12,8 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await signInWithEmailAndPassword(auth, email, password).then(() => {
-      navigate('/', { state: { userProfile } });
-    });
+    await signInWithEmailAndPassword(auth, email, password);
+    navigate('/');
   };
 
   return (

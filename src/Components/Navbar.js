@@ -1,15 +1,24 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase-config";
 import '../App.css'
-import { onAuthStateChanged } from "firebase/auth";
 
 function NavBar() {
-  const [userProfile, setUserProfile] = useState({});
+  const [userProfile, setUserProfile] = useState(null);
 
-  onAuthStateChanged(auth, (currentUser) => {
-    setUserProfile(currentUser);
-  });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      setUserProfile(currentUser);
+    });
+  }, [userProfile])
+
+  const logout = async () => {
+    navigate('/login');
+    await signOut(auth);
+  }
 
   return (
     <header className="header">
@@ -22,7 +31,7 @@ function NavBar() {
         <ul className="right">
           <li>
             {userProfile ?
-              <Link className="links" to="/logout">{userProfile.name}</Link>
+              <Link className="links" onClick={logout}>{userProfile?.email?.split("@")[0]}</Link>
               :
               <Link className="links" to="/login">Login</Link>
             }
