@@ -1,25 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { Button, Container, Form } from "react-bootstrap";
 import { auth } from "../firebase-config";
 
 function Login() {
-  const [userProfile, setUserProfile] = useState({});
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
-  onAuthStateChanged(auth, (currentUser) => {
-    setUserProfile(currentUser);
-  })
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await signInWithEmailAndPassword(auth, email, password).then(() => {
-      navigate('/', { state: { userProfile } });
-    });
+    await signInWithEmailAndPassword(auth, email, password);
+    navigate('/');
   };
 
   return (

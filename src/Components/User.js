@@ -28,7 +28,7 @@ function User() {
 
   useEffect(() => {
     const getUser = async () => {
-      const users = await getDocs(userCollection);
+      const users = await getDocs(collection(db, "users"));
       const usersData = users.docs.map((user) => ({
         ...user.data(),
         id: user.id,
@@ -36,7 +36,7 @@ function User() {
       setUsers(usersData);
     };
     getUser();
-  }, [userCollection]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -130,14 +130,16 @@ function User() {
                 placeholder="Enter Title"
                 autoFocus
                 value={name}
+                required
                 onChange={(e) => setName(e.target.value)}
-              ></Form.Control>
+                ></Form.Control>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Control
                 as="input"
                 type="email"
                 value={email}
+                required
                 placeholder="Enter Email"
                 onChange={(e) => setEmail(e.target.value)}
               ></Form.Control>
