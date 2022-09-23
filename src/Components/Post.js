@@ -8,8 +8,10 @@ import {
   getPostAction,
   updatePostAction,
 } from "../Redux/actions";
+import { getItem } from "../utils";
 import ReactModal from "./Modal";
 import NavBar from "./Navbar";
+import NeedLoggedIn from "./NeedLoggedIn";
 
 function Post() {
   const [id, setId] = useState("");
@@ -17,6 +19,7 @@ function Post() {
   const [body, setBody] = useState("");
   const [postAction, setPostAction] = useState("create");
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [show, setShow] = useState(false);
 
   const dispatch = useDispatch();
@@ -37,8 +40,6 @@ function Post() {
           data: { title, body },
         })
       );
-      setTitle("");
-      setBody("");
     } else {
       dispatch(
         updatePostAction({
@@ -48,33 +49,50 @@ function Post() {
         })
       );
     }
+    setTitle("");
+    setBody("");
     setShow(false);
   };
 
   const updatePost = (post) => {
-    setPostAction("update");
-    setId(post.id);
-    setTitle(post.title);
-    setBody(post.body);
-    setShow(true);
+    if (!getItem("profile")?.token) {
+      setIsLoggedIn(true);
+    } else {
+      setShow(true);
+      setPostAction("update");
+      setId(post.id);
+      setTitle(post.title);
+      setBody(post.body);
+    }
   };
 
   const deletePost = (id) => {
-    dispatch(
-      deletePostAction({
-        url: "https://jsonplaceholder.typicode.com/posts",
-        id
-      })
-    );
+    if (!getItem("profile")?.token) {
+      setIsLoggedIn(true);
+    } else {
+      dispatch(
+        deletePostAction({
+          url: "https://jsonplaceholder.typicode.com/posts",
+          id,
+        })
+      );
+    }
   };
 
   return (
     <div>
       <NavBar />
       <div style={{ textAlign: "right", margin: "10px" }}>
-        <Button onClick={() => setShow(true)}>Create</Button>
+        <Button
+          onClick={() => {
+            if (!getItem("profile")?.token) setIsLoggedIn(true);
+            else setShow(true);
+          }}
+        >
+          Create
+        </Button>
       </div>
-      <table className="table">
+      <table className="table" style={{ maxWidth: "100%" }}>
         <thead>
           <tr className="text-center">
             <th>No</th>
@@ -124,7 +142,7 @@ function Post() {
               autoFocus
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              ></Form.Control>
+            ></Form.Control>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Control
@@ -138,12 +156,23 @@ function Post() {
             <Button className="m-2" type="submit">
               Submit
             </Button>
-            <Button onClick={() => setShow(false)} className="m-2" variant="danger" type="reset">
+            <Button
+              onClick={() => setShow(false)}
+              className="m-2"
+              variant="danger"
+              type="reset"
+            >
               Cancel
             </Button>
           </Form.Group>
         </Form>
       </ReactModal>
+
+      <NeedLoggedIn
+        onClose={() => setIsLoggedIn(false)}
+        title="Login"
+        show={isLoggedIn}
+      />
     </div>
   );
 }

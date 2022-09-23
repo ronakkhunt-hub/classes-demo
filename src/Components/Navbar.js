@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import {  } from "firebase/storage";
 import { auth } from "../firebase-config";
-import { addItem } from '../utils';
-import "../App.css";
+import { addItem, removeItem } from "../utils";
 
 function NavBar() {
   const [userProfile, setUserProfile] = useState(null);
@@ -12,13 +12,14 @@ function NavBar() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
-      addItem("profile", { token: currentUser.uid })
+      addItem("profile", { token: currentUser?.uid });
       setUserProfile(currentUser);
     });
   }, [userProfile]);
-
+  
   const logout = async () => {
     navigate("/login");
+    removeItem("profile");
     await signOut(auth);
   };
 
@@ -46,7 +47,12 @@ function NavBar() {
           <li>
             {userProfile ? (
               userProfile?.photoURL ? (
-                <img className="rounded-circle" style={{ width: "40px", height: "40px" }} src={userProfile.photoURL} onClick={() => logout()} />
+                <img
+                  className="rounded-circle"
+                  style={{ width: "40px", height: "40px" }}
+                  src={userProfile.photoURL}
+                  onClick={() => logout()}
+                />
               ) : (
                 <Link className="links" onClick={() => logout()}>
                   {userProfile.displayName

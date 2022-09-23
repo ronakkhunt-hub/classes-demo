@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { Button, Card, Container, Form } from "react-bootstrap";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   collection,
   getDocs,
@@ -10,8 +11,10 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import NavBar from "./Navbar";
-import { db } from "../firebase-config";
+import { db, storage } from "../firebase-config";
 import ReactModal from "./Modal";
+import NeedLoggedIn from "./NeedLoggedIn";
+import { getItem } from "../utils";
 
 function User() {
   const [users, setUsers] = useState([]);
@@ -20,8 +23,10 @@ function User() {
   const [email, setEmail] = useState("");
   const [dob, setDob] = useState("");
   const [description, setDescription] = useState("");
+  const [profile, setProfile] = useState("");
   const [userAction, setUserAction] = useState("create");
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [show, setShow] = useState(false);
 
   const userCollection = collection(db, "users");
@@ -41,40 +46,78 @@ function User() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (userAction === "create") {
-      await addDoc(userCollection, { name, email, dob, description }).then(
-        (result) => {
-          setUsers([
-            { id: result.id, name, email, dob, description },
-            ...users,
-          ]);
-        }
-      );
+      await addDoc(userCollection, {
+        name,
+        email,
+        profile,
+        dob,
+        description,
+      }).then((result) => {
+        setUsers([
+          { id: result.id, name, email, profile, dob, description },
+          ...users,
+        ]);
+      });
     } else {
       const updateCollection = doc(db, "users", id);
-      await updateDoc(updateCollection, { name, email, dob, description });
+      await updateDoc(updateCollection, {
+        name,
+        email,
+        profile,
+        dob,
+        description,
+      });
       let newArray = [...users];
       const index = newArray.findIndex((user) => user.id === id);
-      newArray[index] = { ...newArray[index], name, email, dob, description };
+      newArray[index] = {
+        ...newArray[index],
+        name,
+        profile,
+        email,
+        dob,
+        description,
+      };
       setUsers(newArray);
     }
     setShow(false);
   };
 
   const updateUser = (user) => {
-    setUserAction("update");
-    setShow(true);
-    setId(user.id);
-    setName(user.name);
-    setEmail(user.email);
-    setDob(user.dob);
-    setDescription(user.description);
+    if (!getItem("profile")?.token) {
+      setIsLoggedIn(true);
+    } else {
+      setShow(true);
+      setUserAction("update");
+      setId(user.id);
+      setName(user.name);
+      setEmail(user.email);
+      setDob(user.dob);
+      setProfile(user.profile);
+      setDescription(user.description);
+    }
   };
 
   const deleteUser = async (id) => {
-    const deleteCollection = doc(db, "users", id);
-    await deleteDoc(deleteCollection).then(() => {
-      const newArray = users.filter((user) => user.id !== id);
-      setUsers(newArray);
+    if (!getItem("profile")?.token) {
+      setIsLoggedIn(true);
+    } else {
+      const deleteCollection = doc(db, "users", id);
+      await deleteDoc(deleteCollection).then(() => {
+        const newArray = users.filter((user) => user.id !== id);
+        setUsers(newArray);
+      });
+    }
+  };
+
+  const onUploadImage = (file) => {
+    const uploadRef = ref(
+      storage,
+      `images/${file.name}${new Date().getTime()}`
+    );
+    uploadBytes(uploadRef, file).then((result) => {
+      getDownloadURL(result.ref).then((url) => {
+        setProfile(url);
+      });
     });
   };
 
@@ -82,22 +125,36 @@ function User() {
     <>
       <NavBar />
       <div style={{ textAlign: "right", margin: "10px" }}>
-        <Button onClick={() => setShow(true)}>Create</Button>
+        <Button
+          onClick={() => {
+            if (!getItem("profile")?.token) setIsLoggedIn(true);
+            else setShow(true);
+          }}
+        >
+          Create
+        </Button>
       </div>
       <div className="m-3">
         <Container className="d-flex flex-wrap justify-content-center">
           {users?.map((user, key) => (
             <Card className="m-1" key={key}>
               <Card.Header className="text-center">{user.name}</Card.Header>
-              <Card.Body className="text-left">
-                <b>Name:</b> {user.name}
-                <br />
-                <b>Email:</b> {user.email}
-                <br />
-                <b>DOB:</b> {user.dob}
-                <br />
-                <b>Description:</b> {user.description}
-                <br />
+              <Card.Body>
+                <div className="text-center my-2">
+                  <img
+                    style={{ width: "60px", height: "60px" }}
+                    src={user.profile}
+                  />
+                </div>
+                <div className="text-left">
+                  <b>Name:</b> {user.name}
+                  <br />
+                  <b>Email:</b> {user.email}
+                  <br />
+                  <b>DOB:</b> {user.dob}
+                  <br />
+                  <b>Description:</b> {user.description}
+                </div>
               </Card.Body>
               <Card.Footer className="text-center">
                 <Button
@@ -132,7 +189,7 @@ function User() {
                 value={name}
                 required
                 onChange={(e) => setName(e.target.value)}
-                ></Form.Control>
+              ></Form.Control>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Control
@@ -150,6 +207,12 @@ function User() {
                 type="date"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="file"
+                onChange={(e) => onUploadImage(e.target.files[0])}
               ></Form.Control>
             </Form.Group>
             <Form.Group className="mb-3">
@@ -175,6 +238,12 @@ function User() {
             </Form.Group>
           </Form>
         </ReactModal>
+
+        <NeedLoggedIn
+          onClose={() => setIsLoggedIn(false)}
+          title="Login"
+          show={isLoggedIn}
+        />
       </div>
     </>
   );
