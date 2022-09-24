@@ -87,6 +87,9 @@ function Post() {
           onClick={() => {
             if (!getItem("profile")?.token) setIsLoggedIn(true);
             else setShow(true);
+            setPostAction("create");
+            setTitle("");
+            setBody("");
           }}
         >
           Create
@@ -131,7 +134,7 @@ function Post() {
         </tbody>
       </table>
       <ReactModal
-        title="Create User"
+        title={`${postAction} User`}
         onClose={() => setShow(false)}
         show={show}
       >

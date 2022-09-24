@@ -29,6 +29,7 @@ function Login() {
             <Form.Label htmlFor="email">Email</Form.Label>
             <Form.Control
               type="email"
+              required
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter email..."
             />
@@ -37,6 +38,7 @@ function Login() {
             <Form.Label htmlFor="password">Password</Form.Label>
             <Form.Control
               type="password"
+              required
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter password..."
             />

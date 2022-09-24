@@ -79,6 +79,12 @@ function User() {
       };
       setUsers(newArray);
     }
+    setId("");
+    setName("");
+    setEmail("");
+    setDob("");
+    setProfile("");
+    setDescription("");
     setShow(false);
   };
 
@@ -129,6 +135,13 @@ function User() {
           onClick={() => {
             if (!getItem("profile")?.token) setIsLoggedIn(true);
             else setShow(true);
+            setUserAction("create");
+            setId("");
+            setName("");
+            setEmail("");
+            setDob("");
+            setProfile("");
+            setDescription("");
           }}
         >
           Create
